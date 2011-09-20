@@ -12,7 +12,7 @@
 */
 function add_mathjax() {
   $custom_cdn = esc_url( get_option('custom_mathjax_cdn') );
-  $custom_config = wp_kses( get_option('custom_mathjax_config') );
+  $custom_config = wp_kses( get_option('custom_mathjax_config'), array() );
   echo "\n<script type='text/x-mathjax-config'>\n";
   if ( $custom_config ) {
     echo $custom_config;
