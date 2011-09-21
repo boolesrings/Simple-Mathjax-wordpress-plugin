@@ -1,6 +1,11 @@
-Hi!
+=== Simple Mathjax ===
+Contributors: sgcoskey
+Tags: mathjax, latex
+Stable tag: 0.0
 
-GPL and all that!
+Yet another plugin to add mathjax support to your wordpress blog.  This is the only plugin that uses $ signs for equations by default.
+
+== Description ==
 
 This wordpress plugin is yet another simple plugin to load the mathjax script
 at the bottom of all of your pages.  It uses a very all-inclusive mathjax
