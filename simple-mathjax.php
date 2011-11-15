@@ -102,6 +102,6 @@ function simple_mathjax_options() {
 <?php }
 
 add_action('wp_footer', 'add_mathjax');
-add_action('loop_start', 'add_preamble');
+add_action('wp_head', 'add_preamble');
 
 ?>
