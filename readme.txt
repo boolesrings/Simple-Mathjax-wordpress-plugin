@@ -36,4 +36,7 @@ Nothing unusual here!
 
 == Changelog ==
 
+0.1 improved loading of the LaTeX preamble so that it appears just
+below the body tag, rather than in the header
+
 0.0 initial release

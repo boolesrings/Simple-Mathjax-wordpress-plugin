@@ -31,16 +31,20 @@ function add_mathjax() {
 }
 
 /*
- * inserts an invisible math-mode span at the top of the page.  good place for newcommands.
+ * inserts the mathjax preamble inside the body and above the content
 */
-function add_preamble() {
+function add_preamble_adder() {
   $preamble = get_option('latex_preamble');
   if ( $preamble ) {
-    echo '<span style="display:none">';
-    echo '\(';
-    echo esc_html($preamble);
-    echo '\)';
-    echo '</span>';
+    $preamble = preg_replace('/\\\\/','\\\\\\\\',$preamble);
+?>
+<script type='text/javascript'>
+  newNode = document.createElement('script');
+  newNode.type = "math/tex";
+  newNode.innerHTML = '<?php echo esc_js($preamble); ?>';
+  document.body.insertBefore(newNode,document.body.firstChild);
+</script>
+<?php
   }
 }
 
@@ -86,7 +90,7 @@ function simple_mathjax_options() {
         <tr valign="top">
         <th scope="row">Custom mathjax config</th>
         <td><textarea name="custom_mathjax_config" cols="50" rows="10"/><?php echo esc_textarea(get_option('custom_mathjax_config')); ?></textarea></td>
-	<td><p>This text will be placed inside the <code>&lt;script x-mathjax-config&gt;</code> tag (see <a href="http://www.mathjax.org/docs/1.1/configuration.html#using-in-line-configuration-options">here</a> for details)</p><p>If you leave this blank, the default will be used: <code>MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</code></p></td>
+	<td><p>This text will be placed inside the <code>&lt;script x-mathjax-config&gt;</code> tag</p><p>If you leave this blank, the default will be used: <code>MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</code></p></td>
         </tr>
         <tr valign="top">
         <th scope="row">Custom LaTeX preamble</th>
@@ -101,7 +105,7 @@ function simple_mathjax_options() {
 </div>
 <?php }
 
+add_action('wp_footer', 'add_preamble_adder');
 add_action('wp_footer', 'add_mathjax');
-add_action('wp_head', 'add_preamble');
 
 ?>
