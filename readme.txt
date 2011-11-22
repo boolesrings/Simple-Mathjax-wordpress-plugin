@@ -5,7 +5,7 @@ Donate link: http://boolesrings.org
 Tags: mathjax, latex
 Requires at least: 3.0
 Tested up to: 3.2.1
-Stable tag: 0.0
+Stable tag: 0.1
 
 Yet another plugin to add MathJax support to your wordpress blog.
 Just wrap your equations inside $ signs and MathJax will render
