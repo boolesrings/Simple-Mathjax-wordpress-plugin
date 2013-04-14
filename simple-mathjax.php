@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Simple Mathjax
  * Description: Load the mathjax scripts across your wordpress blog
- * Version: 0.2
+ * Version: 0.3
  * Author: Samuel Coskey, Peter Krautzberger
  * Author URI: http://boolesrings.org
 */
@@ -99,12 +99,15 @@ function simple_mathjax_options() {
         <td><textarea name="latex_preamble" cols="50" rows="10"/><?php echo esc_textarea(get_option('latex_preamble')); ?></textarea></td>
 	<td><p>A good place to put \newcommand's and \renewcommand's</p><p><strong>Do not us $ signs</strong>, they will be added for you</p><p>E.g.<br/><code>\newcommand{\NN}{\mathbb N}<br/>\newcommand{\abs}[1]{\left|#1\right|}</code></p></td>
         </tr>
+<!--
+removed due to reports of it not working
 	<tr valign="top">
 	<th scope="row">Enable Disqus compatibility</th>
 	<td><input type="checkbox" name="disqus_compat" value="yes" <?php if ( get_option('disqus_compat') ) { echo 'checked'; } ?> /> Enable</td>
 	<td><p>Allows mathjax to run in the <a href="http://disqus.com">Disqus</a> comment area.  Useful if you use the <a href="http://wordpress.org/extend/plugins/disqus-comment-system/">Disqus comment system</a> plugin.</p></td>
 	</tr>
-    </table>
+-->
+      </table>
     <p class="submit">
     <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
     </p>
@@ -115,7 +118,8 @@ function simple_mathjax_options() {
 
 /*
  * if the option is set, imports a script that adds disqus support for mathjax
-*/
+ * (removed due to reports of it no longer working)
+ *
 if ( get_option( 'disqus_compat' ) ) {
   add_action('wp_footer', 'add_disqus_compat');
 }
@@ -123,5 +127,7 @@ function add_disqus_compat() {
   wp_register_script( 'disqus_compat', plugins_url('/disqus-compat.js', __FILE__));
   wp_enqueue_script( 'disqus_compat' );
 }
+*/
+
 
 ?>
