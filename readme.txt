@@ -36,6 +36,8 @@ Nothing unusual here!
 
 == Changelog ==
 
+`0.3` christianp: use wp_enqueue_script to allow others to use mathjax as a dependency
+
 `0.2` added disqus compatibility.
 
 enclosed the preamble in a hidden span to cover a small space created by mathjax v. 2
