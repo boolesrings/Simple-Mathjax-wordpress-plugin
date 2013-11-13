@@ -21,7 +21,7 @@ function configure_mathjax() {
 add_action('wp_enqueue_scripts', 'add_mathjax');
 function add_mathjax() {
   $custom_cdn = esc_url( get_option('custom_mathjax_cdn') );
-  $cdn = $custom_cdn ? $custom_cdn : "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+  $cdn = $custom_cdn ? $custom_cdn : "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,Safe.js";
 
   wp_enqueue_script('mathjax', $cdn);
 }
@@ -87,7 +87,7 @@ function simple_mathjax_options() {
         <tr valign="top">
         <th scope="row">Custom mathjax CDN</th>
         <td><input type="text" name="custom_mathjax_cdn" size="50" value="<?php echo esc_url( get_option('custom_mathjax_cdn') ); ?>" /></td>
-	<td><p>If you leave this blank, the default will be used: <code>http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML</code></p></td>
+	<td><p>If you leave this blank, the default will be used: <code>http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,Safe.js</code></p></td>
         </tr>
         <tr valign="top">
         <th scope="row">Custom mathjax config</th>
@@ -99,14 +99,7 @@ function simple_mathjax_options() {
         <td><textarea name="latex_preamble" cols="50" rows="10"/><?php echo esc_textarea(get_option('latex_preamble')); ?></textarea></td>
 	<td><p>A good place to put \newcommand's and \renewcommand's</p><p><strong>Do not us $ signs</strong>, they will be added for you</p><p>E.g.<br/><code>\newcommand{\NN}{\mathbb N}<br/>\newcommand{\abs}[1]{\left|#1\right|}</code></p></td>
         </tr>
-<!--
-removed due to reports of it not working
-	<tr valign="top">
-	<th scope="row">Enable Disqus compatibility</th>
-	<td><input type="checkbox" name="disqus_compat" value="yes" <?php if ( get_option('disqus_compat') ) { echo 'checked'; } ?> /> Enable</td>
-	<td><p>Allows mathjax to run in the <a href="http://disqus.com">Disqus</a> comment area.  Useful if you use the <a href="http://wordpress.org/extend/plugins/disqus-comment-system/">Disqus comment system</a> plugin.</p></td>
-	</tr>
--->
+
       </table>
     <p class="submit">
     <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
@@ -115,19 +108,6 @@ removed due to reports of it not working
 </div>
 <?php }
 
-
-/*
- * if the option is set, imports a script that adds disqus support for mathjax
- * (removed due to reports of it no longer working)
- *
-if ( get_option( 'disqus_compat' ) ) {
-  add_action('wp_footer', 'add_disqus_compat');
-}
-function add_disqus_compat() {
-  wp_register_script( 'disqus_compat', plugins_url('/disqus-compat.js', __FILE__));
-  wp_enqueue_script( 'disqus_compat' );
-}
-*/
 
 
 ?>
