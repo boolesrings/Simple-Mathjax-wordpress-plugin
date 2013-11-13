@@ -38,13 +38,12 @@ Nothing unusual here!
 
 `0.4` use safe mode (prevents evil scripts) by default
 
-`0.3` christianp: use wp_enqueue_script to allow others to use mathjax as a
-dependency.  removed disqus compatibility due to reports of it no longer
+`0.3` use wp_enqueue_script to allow others to use mathjax as a dependency
+(christianp).  removed disqus compatibility due to reports of it no longer
 working.
 
-`0.2` added disqus compatibility.
-
-enclosed the preamble in a hidden span to cover a small space created by mathjax v.2
+`0.2` added disqus compatibility. enclosed the preamble in a hidden span to
+cover a small space created by mathjax v.2
 
 `0.1` improved loading of the LaTeX preamble so that it appears just
 below the body tag, rather than in the header
