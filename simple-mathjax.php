@@ -21,7 +21,7 @@ function configure_mathjax() {
 add_action('wp_enqueue_scripts', 'add_mathjax');
 function add_mathjax() {
   $custom_cdn = esc_url( get_option('custom_mathjax_cdn') );
-  $cdn = $custom_cdn ? $custom_cdn : "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+  $cdn = $custom_cdn ? $custom_cdn : "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,Safe.js";
 
   wp_enqueue_script('mathjax', $cdn);
 }
