@@ -21,6 +21,7 @@ function configure_mathjax() {
 add_action('wp_enqueue_scripts', 'add_mathjax');
 if ( get_option( 'mathjax_in_admin' ) ) {
 	add_action('admin_enqueue_scripts', 'add_mathjax');
+	add_action('admin_footer', 'add_preamble_adder');
 }
 
 function add_mathjax() {
