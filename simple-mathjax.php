@@ -105,7 +105,7 @@ function simple_mathjax_options() {
         </tr>
 		<tr valign="top">
 		<th scope="row">Load MathJax on admin pages</th>
-		<td><input type="checkbox" name="mathjax_in_admin" value="yes" <?php if get_option('mathjax_in_admin'){ echo "checked"; } ?> /></td>
+		<td><input type="checkbox" name="mathjax_in_admin" value="yes" <?php if( get_option('mathjax_in_admin') ) { echo "checked"; } ?> /></td>
 		<td><p>If you tick this box, MathJax will be loaded on admin pages as well as the actual site.</p></td>
 		</tr>
       </table>
