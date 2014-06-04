@@ -59,7 +59,7 @@ function add_preamble_adder() {
 add_action('admin_menu', 'mathjax_create_menu');
 function mathjax_create_menu() {
   $simple_mathjax_page = add_options_page(
-    'simple_mathjax_prefpane',  // Name of page
+    'Simple MathJax options',  // Name of page
     'Simple Mathjax',           // Label in menu
     'manage_options',           // Capability required
     'simple_mathjax_identifier',  // Menu slug, used to uniquely identify the page
@@ -105,7 +105,7 @@ function simple_mathjax_options() {
         </tr>
 		<tr valign="top">
 		<th scope="row">Load MathJax on admin pages</th>
-		<td><input type="checkbox" name="mathjax_in_admin" checked="<?php echo get_option('mathjax_in_admin') ); ?>" /></td>
+		<td><input type="checkbox" name="mathjax_in_admin" value="yes" <?php if get_option('mathjax_in_admin'){ echo "checked"; } ?> /></td>
 		<td><p>If you tick this box, MathJax will be loaded on admin pages as well as the actual site.</p></td>
 		</tr>
       </table>
