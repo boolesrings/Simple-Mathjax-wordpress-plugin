@@ -19,6 +19,11 @@ function configure_mathjax() {
 }
 
 add_action('wp_enqueue_scripts', 'add_mathjax');
+if ( get_option( 'mathjax_in_admin' ) ) {
+	add_action('admin_enqueue_scripts', 'add_mathjax');
+	add_action('admin_footer', 'add_preamble_adder');
+}
+
 function add_mathjax() {
   $custom_cdn = esc_url( get_option('custom_mathjax_cdn') );
   $cdn = $custom_cdn ? $custom_cdn : "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,Safe.js";
@@ -55,7 +60,7 @@ function add_preamble_adder() {
 add_action('admin_menu', 'mathjax_create_menu');
 function mathjax_create_menu() {
   $simple_mathjax_page = add_options_page(
-    'simple_mathjax_prefpane',  // Name of page
+    'Simple MathJax options',  // Name of page
     'Simple Mathjax',           // Label in menu
     'manage_options',           // Capability required
     'simple_mathjax_identifier',  // Menu slug, used to uniquely identify the page
@@ -72,7 +77,7 @@ function register_simple_mathjax_settings() {
   register_setting( 'simple_mathjax_group', 'custom_mathjax_cdn' );
   register_setting( 'simple_mathjax_group', 'custom_mathjax_config' );
   register_setting( 'simple_mathjax_group', 'latex_preamble' );
-  register_setting( 'simple_mathjax_group', 'disqus_compat' );
+  register_setting( 'simple_mathjax_group', 'mathjax_in_admin' );
 }
 function simple_mathjax_options() {
 ?>
@@ -99,7 +104,11 @@ function simple_mathjax_options() {
         <td><textarea name="latex_preamble" cols="50" rows="10"/><?php echo esc_textarea(get_option('latex_preamble')); ?></textarea></td>
 	<td><p>A good place to put \newcommand's and \renewcommand's</p><p><strong>Do not us $ signs</strong>, they will be added for you</p><p>E.g.<br/><code>\newcommand{\NN}{\mathbb N}<br/>\newcommand{\abs}[1]{\left|#1\right|}</code></p></td>
         </tr>
-
+		<tr valign="top">
+		<th scope="row">Load MathJax on admin pages</th>
+		<td><input type="checkbox" name="mathjax_in_admin" value="yes" <?php if( get_option('mathjax_in_admin') ) { echo "checked"; } ?> /></td>
+		<td><p>If you tick this box, MathJax will be loaded on admin pages as well as the actual site.</p></td>
+		</tr>
       </table>
     <p class="submit">
     <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
@@ -107,7 +116,6 @@ function simple_mathjax_options() {
 </form>
 </div>
 <?php }
-
 
 
 ?>
