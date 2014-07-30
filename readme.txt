@@ -36,6 +36,8 @@ Nothing unusual here!
 
 == Changelog ==
 
+`0.5` minor code cleanup
+
 `0.4` use safe mode (prevents evil scripts) by default
 
 `0.3` use wp_enqueue_script to allow others to use mathjax as a dependency
