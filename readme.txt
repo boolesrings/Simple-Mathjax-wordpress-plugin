@@ -4,7 +4,7 @@ Contributors: sgcoskey
 Donate link: http://boolesrings.org
 Tags: mathjax, latex
 Requires at least: 3.0
-Tested up to: 3.9.1
+Tested up to: 4.0
 Stable tag: 0.4
 
 Yet another plugin to add MathJax support to your wordpress blog.
