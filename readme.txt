@@ -36,7 +36,7 @@ Nothing unusual here!
 
 == Changelog ==
 
-`0.5` minor code cleanup
+`0.5` minor code cleanup, allow mathjax in admin screens
 
 `0.4` use safe mode (prevents evil scripts) by default
 
