@@ -9,7 +9,7 @@
 
 
 /*
- * inserts the mathjax configuration and script call
+ * inserts the mathjax configuration
  */
 add_action('wp_head','configure_mathjax',1);
 function configure_mathjax() {
@@ -18,20 +18,16 @@ function configure_mathjax() {
   echo "\n<script type='text/x-mathjax-config'>\n" . $config . "</script>\n";
 }
 
+/*
+ * loads mathjax itself
+*/
 add_action('wp_enqueue_scripts', 'add_mathjax');
-if ( get_option( 'mathjax_in_admin' ) ) {
-	add_action{'admin_head', 'configure_mathjax', 1);
-	add_action('admin_enqueue_scripts', 'add_mathjax');
-	add_action('admin_footer', 'add_preamble_adder');
-}
-
 function add_mathjax() {
   $custom_cdn = esc_url( get_option('custom_mathjax_cdn') );
   $cdn = $custom_cdn ? $custom_cdn : "//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,Safe.js";
 
   wp_enqueue_script('mathjax', $cdn);
 }
-
 
 /*
  * inserts the mathjax preamble inside the body and above the content
@@ -54,6 +50,16 @@ function add_preamble_adder() {
 <?php
   }
 }
+
+/*
+ * Perform all three actions in admin pages too, if the option is set (CP)
+*/
+if ( get_option( 'mathjax_in_admin' ) ) {
+	add_action{'admin_head', 'configure_mathjax', 1);
+	add_action('admin_enqueue_scripts', 'add_mathjax');
+	add_action('admin_footer', 'add_preamble_adder');
+}
+
 
 /*
  * The options pane in the settings section
@@ -105,11 +111,11 @@ function simple_mathjax_options() {
         <td><textarea name="latex_preamble" cols="50" rows="10"/><?php echo esc_textarea(get_option('latex_preamble')); ?></textarea></td>
 	<td><p>A good place to put \newcommand's and \renewcommand's</p><p><strong>Do not us $ signs</strong>, they will be added for you</p><p>E.g.<br/><code>\newcommand{\NN}{\mathbb N}<br/>\newcommand{\abs}[1]{\left|#1\right|}</code></p></td>
         </tr>
-		<tr valign="top">
-		<th scope="row">Load MathJax on admin pages</th>
-		<td><input type="checkbox" name="mathjax_in_admin" value="yes" <?php if( get_option('mathjax_in_admin') ) { echo "checked"; } ?> /></td>
-		<td><p>If you tick this box, MathJax will be loaded on admin pages as well as the actual site.</p></td>
-		</tr>
+	<tr valign="top">
+	<th scope="row">Load MathJax on admin pages</th>
+	<td><input type="checkbox" name="mathjax_in_admin" value="yes" <?php if( get_option('mathjax_in_admin') ) { echo "checked"; } ?> /></td>
+	<td><p>If you tick this box, MathJax will be loaded on admin pages as well as the actual site.</p></td>
+	</tr>
       </table>
     <p class="submit">
     <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
