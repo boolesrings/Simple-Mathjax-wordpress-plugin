@@ -55,7 +55,7 @@ function add_preamble_adder() {
  * Perform all three actions in admin pages too, if the option is set (CP)
 */
 if ( get_option( 'mathjax_in_admin' ) ) {
-	add_action{'admin_head', 'configure_mathjax', 1);
+	add_action('admin_head', 'configure_mathjax', 1);
 	add_action('admin_enqueue_scripts', 'add_mathjax');
 	add_action('admin_footer', 'add_preamble_adder');
 }
