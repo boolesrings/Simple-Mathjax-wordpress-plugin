@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Simple Mathjax
  * Description: Load the mathjax scripts across your wordpress blog
- * Version: 1.0
+ * Version: 1.0.1
  * Author: Samuel Coskey, Peter Krautzberger
  * Author URI: http://boolesrings.org
 */
