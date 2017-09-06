@@ -55,4 +55,3 @@ cover a small space created by mathjax v.2
 below the body tag, rather than in the header
 
 `0.0` initial release
-
