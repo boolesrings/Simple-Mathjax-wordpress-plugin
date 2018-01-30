@@ -22,7 +22,7 @@ equations.
 A preference pane is added to the "Settings" group where you can
 modify the MathJax server location (CDN) and the MathJax configuration
 settings.  (See [this
-page](http://www.mathjax.org/docs/1.1/configuration.html#using-in-line-configuration-options)
+page](https://docs.mathjax.org/en/latest/configuration.html#using-in-line-configuration-options)
 for details on the options available.)  You can also specify a LaTeX
 "preamble" of newcommands which will be loaded in a hidden element
 near the top of each page.
