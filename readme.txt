@@ -36,7 +36,7 @@ Nothing unusual here!
 
 == Changelog ==
 
-`1.0.1` update to latest MathJax version
+`1.0.1, 1.0.2` update to latest MathJax version
 
 `1.0` send default url to new cdn
 
