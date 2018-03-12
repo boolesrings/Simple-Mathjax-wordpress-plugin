@@ -2,7 +2,7 @@
 /*
  * Plugin Name: Simple Mathjax
  * Description: Load the mathjax scripts across your wordpress blog
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Samuel Coskey, Peter Krautzberger
  * Author URI: http://boolesrings.org
 */
@@ -24,7 +24,7 @@ function configure_mathjax() {
 add_action('wp_enqueue_scripts', 'add_mathjax');
 function add_mathjax() {
   $custom_cdn = esc_url( get_option('custom_mathjax_cdn') );
-  $cdn = $custom_cdn ? $custom_cdn : "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML,Safe.js";
+  $cdn = $custom_cdn ? $custom_cdn : "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML,Safe.js";
 
   wp_enqueue_script('mathjax', $cdn);
 }
