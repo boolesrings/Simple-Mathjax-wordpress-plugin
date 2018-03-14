@@ -1,6 +1,6 @@
 === Simple Mathjax ===
 
-Contributors: sgcoskey
+Contributors: sgcoskey, pkra
 Donate link: https://boolesrings.org
 Tags: mathjax, latex
 Requires at least: 3.0
