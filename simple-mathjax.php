@@ -98,7 +98,7 @@ function simple_mathjax_options() {
         <tr valign="top">
         <th scope="row">Custom mathjax CDN</th>
         <td><input type="text" name="custom_mathjax_cdn" size="50" value="<?php echo esc_url( get_option('custom_mathjax_cdn') ); ?>" /></td>
-	<td><p>If you leave this blank, the default will be used: <code>http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML,Safe.js</code></p></td>
+	<td><p>If you leave this blank, the default will be used: <code>//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML,Safe.js</code></p></td>
         </tr>
         <tr valign="top">
         <th scope="row">Custom mathjax config</th>
