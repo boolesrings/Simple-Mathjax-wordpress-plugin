@@ -4,7 +4,7 @@
  * Description: Load the mathjax scripts across your wordpress blog
  * Version: 1.1
  * Author: Samuel Coskey, Peter Krautzberger
- * Author URI: http://boolesrings.org
+ * Author URI: https://boolesrings.org
 */
 
 
