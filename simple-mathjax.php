@@ -2,20 +2,81 @@
 /*
  * Plugin Name: Simple Mathjax
  * Description: Load the mathjax scripts across your wordpress blog
- * Version: 1.1
- * Author: Samuel Coskey, Peter Krautzberger
+ * Version: 2.0
+ * Author: Samuel Coskey, Peter Krautzberger, Christian Lawson-Perfect
  * Author URI: https://boolesrings.org
 */
+
+
+$default_options = array(
+  'major_version' => 3,
+  'mathjax_in_admin' => false,
+  'custom_mathjax_cdn' => '',
+  'custom_mathjax_config' => '',
+  'latex_preamble' => ''
+);
+$default_configs = array(
+  2 => "MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\\\(','\\\\)']], processEscapes: true}});\n",
+  3 => "MathJax = {tex: {inlineMath: [['$','$'],['\\\\(','\\\\)']], processEscapes: true}};\n"
+);
+$default_cdns = array(
+  2 => "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML,Safe.js",
+  3 => "//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
+);
+
+function load_options() {
+  global $default_options;
+  $options = array_merge($default_options,array());
+
+  // restore options from old versions of this plugin
+  $old_keys = array('custom_mathjax_cdn', 'custom_mathjax_config', 'latex_preamble', 'mathjax_in_admin');
+  $has_old_values = false;
+  foreach($old_keys as $key) {
+    if(($value = get_option($key)) !== false) {
+      $options[$key] = $value;
+      $has_old_values = true;
+    }
+  }
+
+
+  // apply options set locally
+  $set_options = get_option('simple_mathjax_options');
+  if(is_array($set_options)) {
+    foreach($set_options as $key=>$value) {
+      if(array_key_exists($key,$options)) {
+        $options[$key] = $value;
+      }
+    }
+  }
+
+  if($has_old_values) {
+    $options['major_version'] = 2;
+    foreach($old_keys as $key) {
+      delete_option($key);
+    }
+    add_option('simple_mathjax_options',$options);
+  }
+
+  return $options;
+}
 
 
 /*
  * inserts the mathjax configuration
  */
+
 add_action('wp_head','configure_mathjax',1);
 function configure_mathjax() {
-  $custom_config = wp_kses( get_option('custom_mathjax_config'), array() );
-  $config = $custom_config ? $custom_config : "MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\\\(','\\\\)']], processEscapes: true}});\n";
-  echo "\n<script type='text/x-mathjax-config'>\n" . $config . "</script>\n";
+  global $default_configs;
+  $options = load_options();
+  $version = $options['major_version'];
+  $custom_config = wp_kses( $options['custom_mathjax_config'], array() );
+  $config = $custom_config ? $custom_config : $default_configs[$version];
+  if($version==2) {
+    echo "\n<script type='text/x-mathjax-config'>\n{$config}\n</script>\n";
+  } else {
+    echo "\n<script>\n{$config}\n</script>\n";
+  }
 }
 
 /*
@@ -23,8 +84,11 @@ function configure_mathjax() {
 */
 add_action('wp_enqueue_scripts', 'add_mathjax');
 function add_mathjax() {
-  $custom_cdn = esc_url( get_option('custom_mathjax_cdn') );
-  $cdn = $custom_cdn ? $custom_cdn : "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML,Safe.js";
+  global $default_cdns;
+  $options = load_options();
+  $version = $options['major_version'];
+  $custom_cdn = esc_url( $options['custom_mathjax_cdn'] );
+  $cdn = $custom_cdn ? $custom_cdn : $default_cdns[$version];
   wp_enqueue_script('mathjax', $cdn, array(), false, true);
 }
 
@@ -33,30 +97,54 @@ function add_mathjax() {
 */
 add_action('wp_footer', 'add_preamble_adder');
 function add_preamble_adder() {
-  $preamble = get_option('latex_preamble');
+  $options = load_options();
+  $version = $options['major_version'];
+  $preamble = $options['latex_preamble'];
   if ( $preamble ) {
-    $preamble = preg_replace('/\\\\/','\\\\\\\\',$preamble);
+    if($version==2) {
+      $preamble = preg_replace('/\\\\/','\\\\\\\\',$preamble);
+
 ?>
-<script type='text/javascript'>
-  newContainer = document.createElement('span');
-  newContainer.style.setProperty("display","none","");
-  newNode = document.createElement('script');
-  newNode.type = "math/tex";
-  newNode.innerHTML = '<?php echo esc_js($preamble); ?>';
-  newContainer.appendChild(newNode);
-  document.body.insertBefore(newContainer,document.body.firstChild);
+<script>
+  (function() {
+    var newContainer = document.createElement('span');
+    newContainer.style.setProperty("display","none","");
+    var newNode = document.createElement('script');
+    newNode.type = "math/tex";
+    var preamble = '<?php echo esc_js($preamble); ?>';
+    newNode.innerHTML = preamble;
+    newContainer.appendChild(newNode);
+    document.body.insertBefore(newContainer,document.body.firstChild);
+  })();
 </script>
 <?php
+
+    } else if($version==3) {
+
+?>
+<script>
+  (function() {
+    var newNode = document.createElement('span');
+    newNode.style.setProperty("display","none","");
+    var preamble = '\\( <?= esc_js(addslashes($preamble)); ?> \\)';
+    newNode.innerHTML = preamble;
+    document.body.insertBefore(newNode,document.body.firstChild);
+  })();
+</script>
+<?php
+
+    }
   }
 }
 
 /*
  * Perform all three actions in admin pages too, if the option is set (CP)
-*/
-if ( get_option( 'mathjax_in_admin' ) ) {
-	add_action('admin_head', 'configure_mathjax', 1);
-	add_action('admin_enqueue_scripts', 'add_mathjax');
-	add_action('admin_footer', 'add_preamble_adder');
+ */
+$options = load_options();
+if ( $options['mathjax_in_admin'] ) {
+   add_action('admin_head', 'configure_mathjax', 1);
+   add_action('admin_enqueue_scripts', 'add_mathjax');
+   add_action('admin_footer', 'add_preamble_adder');
 }
 
 
@@ -69,8 +157,8 @@ function mathjax_create_menu() {
     'Simple MathJax options',  // Name of page
     'Simple Mathjax',           // Label in menu
     'manage_options',           // Capability required
-    'simple_mathjax_identifier',  // Menu slug, used to uniquely identify the page
-    'simple_mathjax_options'    // Function that renders the options page
+    'simple_mathjax_options',  // Menu slug, used to uniquely identify the page
+    'simple_mathjax_options_page'    // Function that renders the options page
   );
 
   if ( ! $simple_mathjax_page )
@@ -79,49 +167,170 @@ function mathjax_create_menu() {
   //call register settings function
   add_action( 'admin_init', 'register_simple_mathjax_settings' );
 }
-function register_simple_mathjax_settings() {
-  register_setting( 'simple_mathjax_group', 'custom_mathjax_cdn' );
-  register_setting( 'simple_mathjax_group', 'custom_mathjax_config' );
-  register_setting( 'simple_mathjax_group', 'latex_preamble' );
-  register_setting( 'simple_mathjax_group', 'mathjax_in_admin' );
-}
-function simple_mathjax_options() {
+
+function simple_mathjax_options_page() {
 ?>
-<div class="wrap">
-<h2>Simple Mathjax options</h2>
-<p>
-  (Please note that this still needs to be tested.  There may be a problem with string-escaping.  For instance, I'm not sure if special characters such as &lt; will be properly processed.)
-</p>
+<div>
+<h1>Simple Mathjax options</h1>
 <form method="post" action="options.php">
-    <?php settings_fields( 'simple_mathjax_group' ); ?>
-    <table class="form-table">
-        <tr valign="top">
-        <th scope="row">Custom mathjax CDN</th>
-        <td><input type="text" name="custom_mathjax_cdn" size="50" value="<?php echo esc_url( get_option('custom_mathjax_cdn') ); ?>" /></td>
-	<td><p>If you leave this blank, the default will be used: <code>//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML,Safe.js</code></p></td>
-        </tr>
-        <tr valign="top">
-        <th scope="row">Custom mathjax config</th>
-        <td><textarea name="custom_mathjax_config" cols="50" rows="10"/><?php echo esc_textarea(get_option('custom_mathjax_config')); ?></textarea></td>
-	<td><p>This text will be placed inside the <code>&lt;script x-mathjax-config&gt;</code> tag</p><p>If you leave this blank, the default will be used: <code>MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});</code></p></td>
-        </tr>
-        <tr valign="top">
-        <th scope="row">Custom LaTeX preamble</th>
-        <td><textarea name="latex_preamble" cols="50" rows="10"/><?php echo esc_textarea(get_option('latex_preamble')); ?></textarea></td>
-	<td><p>A good place to put \newcommand's and \renewcommand's</p><p><strong>Do not us $ signs</strong>, they will be added for you</p><p>E.g.<br/><code>\newcommand{\NN}{\mathbb N}<br/>\newcommand{\abs}[1]{\left|#1\right|}</code></p></td>
-        </tr>
-	<tr valign="top">
-	<th scope="row">Load MathJax on admin pages</th>
-	<td><input type="checkbox" name="mathjax_in_admin" value="yes" <?php if( get_option('mathjax_in_admin') ) { echo "checked"; } ?> /></td>
-	<td><p>If you tick this box, MathJax will be loaded on admin pages as well as the actual site.</p></td>
-	</tr>
-      </table>
-    <p class="submit">
-    <input type="submit" class="button-primary" value="<?php _e('Save Changes') ?>" />
-    </p>
+  <?php settings_fields( 'simple_mathjax_options' ); ?>
+  <?php do_settings_sections('simple_mathjax'); ?>
+
+  <button type="submit"><?php _e('Save Changes'); ?></button>
 </form>
 </div>
 <?php }
 
+function register_simple_mathjax_settings() {
+  global $default_options;
+  register_setting(
+    'simple_mathjax_options', 
+    'simple_mathjax_options', 
+    array(
+      'sanitize_callback' => 'simple_mathjax_options_validate'
+    )
+  );
 
+  add_settings_section(
+    'simple_mathjax_main', 
+    'Main Settings', 
+    'simple_mathjax_main_text', 
+    'simple_mathjax'
+  );
+  add_settings_section('simple_mathjax_config',
+    'Configuration',
+    'simple_mathjax_config_text',
+    'simple_mathjax'
+  );
+
+  add_settings_field(
+    'major_version',
+    'MathJax major version',
+    'simple_mathjax_major_version_input',
+    'simple_mathjax',
+    'simple_mathjax_main',
+    array(
+      'label_for' => 'major_version'
+    )
+  );
+  add_settings_field(
+    'mathjax_in_admin',
+    'Load MathJax on admin pages?',
+    'simple_mathjax_in_admin_input',
+    'simple_mathjax',
+    'simple_mathjax_main',
+    array(
+      'label_for' => 'mathjax_in_admin'
+    )
+  );
+
+  add_settings_field(
+    'custom_mathjax_cdn',
+    'Custom MathJax CDN',
+    'simple_mathjax_cdn_input',
+    'simple_mathjax',
+    'simple_mathjax_config',
+    array(
+      'label_for' => 'custom_mathjax_cdn'
+    )
+  );
+  add_settings_field(
+    'custom_mathjax_config',
+    'Custom MathJax config',
+    'simple_mathjax_config_input',
+    'simple_mathjax',
+    'simple_mathjax_config',
+    array(
+      'label_for' => 'custom_mathjax_config'
+    )
+  );
+  add_settings_field(
+    'latex_preamble',
+    'Custom LaTeX preamble',
+    'simple_mathjax_latex_preamble_input',
+    'simple_mathjax',
+    'simple_mathjax_config',
+    array(
+      'label_for' => 'latex_preamble'
+    )
+  );
+
+}
+
+function simple_mathjax_options_validate($options) {
+  global $default_options;
+  $cleaned = array();
+  foreach($default_options as $key => $value) {
+    $cleaned[$key] = $options[$key];
+  }
+  $cleaned['mathjax_in_admin'] = $cleaned['mathjax_in_admin'] ? true : false;
+  return $cleaned;
+}
+
+function simple_mathjax_main_text() {
+}
+
+function simple_mathjax_config_text() {
+}
+
+function simple_mathjax_major_version_input() {
+  $options = load_options();
 ?>
+  <select id="major_version" name="simple_mathjax_options[major_version]">
+    <option value="2" <?= $options['major_version']==2 ? 'selected' : '' ?>>2</option>
+    <option value="3" <?= $options['major_version']==3 ? 'selected' : '' ?>>3</option>
+  </select>
+  <p>MathJax versions 2 and 3 work very differently. See the <a href="http://docs.mathjax.org/en/latest/upgrading/v2.html">MathJax documentation</a>.</p>
+<?php
+}
+
+function simple_mathjax_in_admin_input() {
+  $options = load_options();
+?>
+  <input type="checkbox" id="mathjax_in_admin" name="simple_mathjax_options[mathjax_in_admin]" <?= $options['mathjax_in_admin'] ? 'checked' : '' ?>>
+  <p>If you tick this box, MathJax will be loaded on admin pages as well as the actual site.</p>
+<?php
+}
+
+function simple_mathjax_cdn_input() {
+  global $default_cdns;
+  $options = load_options();
+?>
+  <input type="text" id="custom_mathjax_cdn" size="50" name="simple_mathjax_options[custom_mathjax_cdn]" value="<?= $options['custom_mathjax_cdn'] ?>">
+  <p>If you leave this blank, the default will be used, depending on the major version of MathJax:</p>
+  <dl>
+    <dt>Version 2</dt>
+    <dd><code><?= $default_cdns[2] ?></code></dd>
+    <dt>Version 3</dt>
+    <dd><code><?= $default_cdns[3] ?></code></dd>
+  </dl>
+<?php
+}
+
+function simple_mathjax_config_input() {
+  global $default_configs;
+  $options = load_options();
+?>
+  <textarea id="custom_mathjax_config" cols="50" rows="10" name="simple_mathjax_options[custom_mathjax_config]"><?= $options['custom_mathjax_config'] ?></textarea>
+  <p>This text will be used to configure MathJax. See <a href="https://docs.mathjax.org/en/latest/options/index.html">the documentation on configuring MathJax</a>.</p>
+  <p>If you leave this blank, the default will be used, according to the major version of MathJax:</p>
+  <dl>
+    <dt>Version 2</dt>
+    <dd><pre><?= $default_configs[2] ?></pre></dd>
+    <dt>Version 3</dt>
+    <dd><pre><?= $default_configs[3] ?></pre></dd>
+  </dl>
+<?php
+}
+
+function simple_mathjax_latex_preamble_input() {
+  $options = load_options();
+?>
+  <textarea id="latex_preamble" cols="50" rows="10" name="simple_mathjax_options[latex_preamble]"><?= $options['latex_preamble'] ?></textarea>
+  <p>This LaTeX will be run invisibly before any other LaTeX on the page. A good place to put \newcommand's and \renewcommand's</p>
+  <p><strong>Do not us $ signs</strong>, they will be added for you</p>
+  <p>E.g.</p>
+  <pre>\newcommand{\NN}{\mathbb N}
+\newcommand{\abs}[1]{\left|#1\right|}</pre>
+<?php
+}
