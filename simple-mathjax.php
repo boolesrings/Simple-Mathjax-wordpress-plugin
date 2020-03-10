@@ -16,8 +16,8 @@ $default_options = array(
   'latex_preamble' => ''
 );
 $default_configs = array(
-  2 => "MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\\\(','\\\\)']], processEscapes: true}});\n",
-  3 => "MathJax = {tex: {inlineMath: [['$','$'],['\\\\(','\\\\)']], processEscapes: true}};\n"
+  2 => "MathJax.Hub.Config({\n  tex2jax: {\n    inlineMath: [['$','$'], ['\\\\(','\\\\)']],\n    processEscapes: true,\n    ignoreHtmlClass: 'tex2jax_ignore|editor-rich-text'\n  }\n});\n",
+  3 => "MathJax = {\n  tex: {\n    inlineMath: [['$','$'],['\\\\(','\\\\)']], \n    processEscapes: true\n  },\n  options: {\n    ignoreHtmlClass: 'tex2jax_ignore|editor-rich-text'\n  }\n};\n"
 );
 $default_cdns = array(
   2 => "//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML,Safe.js",
