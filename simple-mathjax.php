@@ -1,8 +1,8 @@
 <?php
 /*
- * Plugin Name: Simple Mathjax
+ * Plugin Name: Simple MathJax
  * Description: Load the mathjax scripts across your wordpress blog
- * Version: 2.0.1
+ * Version: 2.0.2
  * Author: Samuel Coskey, Peter Krautzberger, Christian Lawson-Perfect
  * Author URI: https://boolesrings.org
  */
@@ -249,7 +249,7 @@ class SimpleMathjax {
   public static function create_menu() {
     $simple_mathjax_page = add_options_page(
       'Simple MathJax options',  // Name of page
-      'Simple Mathjax',           // Label in menu
+      'Simple MathJax',           // Label in menu
       'manage_options',           // Capability required
       'simple_mathjax_options',  // Menu slug, used to uniquely identify the page
       'SimpleMathJax::options_page'    // Function that renders the options page
@@ -268,7 +268,7 @@ class SimpleMathjax {
   public static function options_page() {
   ?>
   <div>
-  <h1>Simple Mathjax options</h1>
+  <h1>Simple MathJax options</h1>
   <form method="post" action="options.php">
     <?php settings_fields( 'simple_mathjax_options' ); ?>
     <?php do_settings_sections('simple_mathjax'); ?>
