@@ -5,6 +5,8 @@
  * Version: 2.1.0
  * Author: Samuel Coskey, Peter Krautzberger, Christian Lawson-Perfect
  * Author URI: https://boolesrings.org
+ * License: GPLv3
+ * License URI: https://www.gnu.org/licenses/gpl-3.0.txt
  */
 
 class SimpleMathjax {
